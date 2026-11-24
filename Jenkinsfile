@@ -1,3 +1,5 @@
+
+       
 pipeline {
     agent any
 
@@ -15,7 +17,17 @@ pipeline {
 
         stage('2. Application Build & Test') {
             steps {
-                bat 'C:\\Users\\VVCE\\AppData\\Local\\Programs\\Python\\Python311\\python.exe -m py_compile app.py'
+                bat '''
+                    echo Checking Python version...
+                    "C:\\Users\\STUDENT\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" --version
+
+                    echo Compiling Python application...
+                    "C:\\Users\\STUDENT\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" -m py_compile app.py
+
+                    if %ERRORLEVEL% NEQ 0 exit /b 1
+
+                    echo Application compilation successful!
+                '''
             }
         }
 
@@ -37,5 +49,10 @@ pipeline {
         success {
             echo "Pipeline succeeded! Image ${REGISTRY}/${IMAGE_NAME}:${BUILD_NUMBER} is available locally and in the registry."
         }
+
+        failure {
+            echo "Pipeline failed! Check the Jenkins console output."
+        }
     }
 }
+
